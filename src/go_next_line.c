@@ -1,25 +1,16 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   get_next_line.c                                    :+:      :+:    :+:   */
+/*   go_next_line.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: bdjoco <bdjoco@student.42.fr>              +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/05/08 18:43:36 by bdjoco            #+#    #+#             */
-/*   Updated: 2025/08/12 10:03:54 by bdjoco           ###   ########.fr       */
+/*   Created: 2025/06/27 12:28:38 by bdjoco            #+#    #+#             */
+/*   Updated: 2025/09/16 02:07:43 by bdjoco           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
-
-static void	free_stash(char **stash)
-{
-	if (stash && *stash)
-	{
-		free(*stash);
-		*stash = NULL;
-	}
-}
+#include "../include/fdf.h"
 
 static char	*read_to_stash(int fd, char *stash)
 {
@@ -28,10 +19,8 @@ static char	*read_to_stash(int fd, char *stash)
 	ssize_t	is_end;
 
 	buff = malloc(BUFFER_SIZE + 1);
-	if (!buff)
-		return (free_stash(&stash), NULL);
-	if (!stash)
-		return (free(buff), NULL);
+	if (!buff || !stash)
+		return (NULL);
 	while (!ft_strchr(stash, '\n'))
 	{
 		is_end = read(fd, buff, BUFFER_SIZE);
@@ -40,7 +29,7 @@ static char	*read_to_stash(int fd, char *stash)
 		buff[is_end] = '\0';
 		tmp = ft_strjoin(stash, buff);
 		if (!tmp)
-			return (free(buff), free_stash(&stash), NULL);
+			return (free(buff), NULL);
 		free(stash);
 		stash = tmp;
 	}
@@ -48,39 +37,31 @@ static char	*read_to_stash(int fd, char *stash)
 	return (stash);
 }
 
-char	*get_next_line(int fd)
+/**
+ * @brief lis un fichier ligne par ligne
+ *
+ * @return renvoie 1 si le fichier n'est pas fini sinon 0
+ */
+int	go_next_line(int fd)
 {
 	static char	*stash;
-	char		*res;
 	char		*n_stash;
 	size_t		i;
 
-	if (fd < 0 || BUFFER_SIZE <= 0)
-		return (free_stash(&stash), NULL);
 	if (!stash)
 		stash = ft_calloc(1, 1);
 	stash = read_to_stash(fd, stash);
 	if (!stash || stash[0] == '\0')
-		return (free_stash(&stash), NULL);
+		return (free(stash), stash = NULL, 0);
 	i = 0;
 	while (stash[i] && stash[i] != '\n')
 		i++;
 	if (stash[i] == '\n')
 		i++;
-	res = ft_substr(stash, 0, i);
 	n_stash = ft_strdup(stash + i);
-	if (!res || !n_stash)
-		return (free(res), free(n_stash), free_stash(&stash), NULL);
+	if (!n_stash)
+		return (free(n_stash), 0);
 	free(stash);
 	stash = n_stash;
-	if (stash && stash[0] == '\0')
-		free_stash(&stash);
-	return (res);
-}
-
-void	gnl_cleanup(void)
-{
-	static char	*stash;
-	
-	free_stash(&stash);
+	return (1);
 }

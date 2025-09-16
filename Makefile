@@ -6,7 +6,7 @@
 #    By: bdjoco <bdjoco@student.42.fr>              +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2025/09/13 17:32:11 by bdjoco            #+#    #+#              #
-#    Updated: 2025/09/13 17:51:31 by bdjoco           ###   ########.fr        #
+#    Updated: 2025/09/16 05:57:11 by bdjoco           ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -14,8 +14,8 @@ NAME = fdf
 
 CC = cc
 
-CFLAGS = -Wall -Wextra -Werror -Ilib/mlx -g3 -lm
-MLXFLAGS = -L$(MLX) -lmlx_Linux -lXext -lX11
+CFLAGS = -Wall -Wextra -Werror -Ilib/mlx -g3
+MLXFLAGS = -L$(MLX) -lmlx_Linux -lXext -lX11 -lm
 
 LIBFT = lib/libft/
 FT_PRINTF = lib/ft_printf/
@@ -24,7 +24,16 @@ MLX = lib/mlx/
 AR = ar rcs
 RM = rm -f
 
-SRC = src/fdf.c
+SRC = src/fdf.c \
+		src/check.c \
+		src/utils.c \
+		src/define.c \
+		src/windows.c \
+		src/draw_line.c \
+		src/map_size.c \
+		src/initialisation.c \
+		src/go_next_line.c
+
 OBJ = $(SRC:.c=.o)
 
 LIBS = $(LIBFT)libft.a $(FT_PRINTF)libftprintf.a $(MLX)libmlx_Linux.a
@@ -68,6 +77,9 @@ fclean : clean
 	@$(MAKE) $(LIBFT) fclean
 	@$(MAKE) $(FT_PRINTF) fclean
 	@$(MAKE) $(MLX) clean > /dev/null 2>&1
+
+cook : all clean
+	@echo "$(BOLD)$(PURPLE)Cook$(RESET) ​🔰​"
 
 re : fclean all
 

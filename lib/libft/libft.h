@@ -42,6 +42,7 @@ int		ft_memcmp(const void *s1, const void *s2, size_t n);
 
 char	*ft_itoa(int nbr);
 char	*get_next_line(int fd);
+void	gnl_cleanup(void);
 char	*ft_strdup(const char *src);
 char	**ft_split(const char *s, char c);
 char	*ft_strchr(char *str, int to_find);
